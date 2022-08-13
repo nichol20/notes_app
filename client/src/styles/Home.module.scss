@@ -1,0 +1,72 @@
+@use './colors';
+@use './mixins' as m;
+
+
+.home_page {
+  @include m.displayFlex(flex-start);
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  gap: 50px;
+  padding: 20px;
+}
+
+.search_box {
+  @include m.displayFlex();
+  gap: 10px;
+  background: colors.$secondaryColor;
+  border-radius: 20px;
+  padding: 10px 14px;
+  width: 300px;
+
+  .image_box {
+    @include m.displayFlex();
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    filter: invert(78%) sepia(34%) saturate(0%) hue-rotate(187deg) brightness(80%) contrast(100%);
+  }
+
+  input {
+    background: transparent;
+    outline: none;
+    border: none;
+    color: colors.$textSecondaryColor;
+    width: 100%;
+    font-size: .875em;
+  }
+}
+
+.notes_container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 320px);
+  grid-template-rows: repeat(auto-fill, 160px);
+  gap: 50px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 40px;
+
+  .add_note {
+    @include m.displayFlex();
+    position: fixed;
+    right: 40px;
+    bottom: 40px;
+    width: 65px;
+    height: 65px;
+    padding: 10px;
+    border-radius: 100%;
+    background: colors.$tertiaryColor;
+    cursor: pointer;
+    transition: .3s;
+    
+    &:hover {
+      background: colors.$selectedTertiaryColor;
+    }
+
+    .image_box {
+      @include m.displayFlex();
+      filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(167deg) brightness(123%) contrast(114%);
+    }
+  }
+}

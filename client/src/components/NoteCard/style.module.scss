@@ -1,0 +1,80 @@
+@use '../../styles/colors';
+@use '../../styles/mixins' as m;
+
+
+.locked_content {
+  width: 100%;
+  height: 100%;
+  @include m.displayFlex();
+  position: relative;
+
+  .chain_box {
+    position: absolute;
+    z-index: 1;
+    width: 320px;
+    height: 25px;
+    @include m.displayFlex();
+  }
+
+  .padlock_box {
+    position: absolute;
+    z-index: 2;
+    border-radius: 100%;
+    background: colors.$primaryColor;
+    width: 60px;
+    height: 60px;
+    padding: 8px;
+  }
+}
+
+.note {
+  background: colors.$secondaryColor;
+  width: 320px;
+  height: 160px;
+  padding: 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: .3s;
+  justify-self: center;
+  position: relative;
+
+  &:hover {
+    width: 340px;
+    height: 180px;
+  }
+
+  .alert_circle_box {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    filter: invert(100%) sepia(0%) saturate(10%) hue-rotate(217deg) brightness(103%) contrast(103%);
+  }
+
+  .title {
+    font-size: 1em;
+    color: colors.$textPrimaryColor;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .content {
+    font-size: .875em;
+    color: colors.$textSecondaryColor;
+    margin-bottom: 5px;
+    width: 100%;
+    height: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+  }
+
+  .creation_date {
+    font-size: .750em;
+    color: colors.$textSecondaryColor;
+  }
+}

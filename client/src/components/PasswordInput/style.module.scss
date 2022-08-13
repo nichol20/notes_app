@@ -1,0 +1,77 @@
+@use '../../../src/styles/colors';
+@use '../../../src/styles/mixins' as m;
+
+
+.password_input_component {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  min-height: 100vh;
+  @include m.displayFlex(flex-start, center);
+  flex-direction: column;
+  padding: 20px;
+  background: colors.$primaryColor;
+
+  .header {
+    height: 100px;
+    width: 100%;
+    padding: 10px 20px;
+    @include m.displayFlex(space-between);
+  
+    .back_button {
+      background: transparent;
+      border: none;
+      @include m.hoverbleOption();
+  
+      img {
+        filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(167deg) brightness(123%) contrast(114%);
+      }
+    }
+  }
+
+  .content {
+    width: 300px;
+    @include m.displayFlex();
+    flex-direction: column;
+    gap: 10px;
+
+    .image_box {
+      width: 200px;
+      height: 200px;
+    }
+
+    input {
+      width: 180px;
+      height: 40px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      outline: none;
+      border: none;
+      background: colors.$secondaryColor;
+      color: colors.$textPrimaryColor;
+    }
+
+    .password_error {
+      font-size: 1em;
+      color: red;
+    }
+
+    button {
+      padding: 6px 12px;
+      border-radius: 20px;
+      width: 100px;
+      height: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: .3s;
+      background: colors.$textPrimaryColor;
+      color: colors.$primaryColor;
+
+      &:hover {
+        background: colors.$textSecondaryColor;
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+@use './colors';
+
+@mixin displayFlex($justifyContent: center, $alignItems: center) {
+  display: flex;
+  justify-content: $justifyContent;
+  align-items: $alignItems;
+}
+
+@mixin hoverbleOption($width: 40px, $height: 40px, $padding: 4px) {
+  width: $width;
+  height: $height;
+  padding: $padding;
+  transition: .3s;
+  border-radius: 100%;
+  cursor: pointer;
+
+  &:hover {
+    background: colors.$transparentBackgroundHover;
+  }
+}
