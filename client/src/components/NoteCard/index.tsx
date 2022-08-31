@@ -8,14 +8,17 @@ import chainImg from '../../../public/chain.svg'
 import alertCircleIcon from '../../../public/alert-circle.svg'
 
 import styles from './style.module.scss'
+import { lowerCase } from "../../pages"
+import { HighlightedText } from "../HighlightedText"
 
 interface NoteCardProps {
   note: NoteData | NoteLocked
+  searchQuery: string
 }
 
-export const NodeCard = ({ note }: NoteCardProps) => {
+export const NodeCard = ({ note, searchQuery }: NoteCardProps) => {
   const creationDate = String(new Date(note.created_at)).split(' ')
-
+  
   return (
     <Link href={`/notes/${note.id}`}>
       <div className={styles.note}>
@@ -43,10 +46,14 @@ export const NodeCard = ({ note }: NoteCardProps) => {
           : (
             <>
               <h3 className={styles.title}>
-                {note.title.length > 0 ? note.title : note.content}
+                {
+                  note.title.length > 0 
+                  ? <HighlightedText text={note.title} snippet={searchQuery} />
+                  : <HighlightedText text={note.content} snippet={searchQuery} />
+                }
               </h3>
               <p className={styles.content}>
-                {note.content}
+                <HighlightedText text={note.content} snippet={searchQuery} />
               </p>
               <span className={styles.creation_date}>
                 {`${creationDate[1]} ${creationDate[2]} ${creationDate[3]}`}

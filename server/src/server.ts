@@ -3,6 +3,7 @@ import cors from 'cors'
 
 import db from './db'
 import { notesRoutes } from './routes/notes'
+import { todosRoutes } from './routes/todos'
 
 const PORT = process.env.PORT || 5000
 const app = express()
@@ -10,7 +11,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use(notesRoutes)
-
+app.use(todosRoutes)
 
 // Global error handling
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

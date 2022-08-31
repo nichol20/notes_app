@@ -14,8 +14,8 @@
   @include m.displayFlex(space-between);
 
   .back_button {
-    text-decoration: none;
-    display: block;
+    background: transparent;
+    border: none;
     @include m.hoverbleOption();
 
     img {

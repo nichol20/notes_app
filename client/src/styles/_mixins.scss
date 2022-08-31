@@ -13,6 +13,8 @@
   transition: .3s;
   border-radius: 100%;
   cursor: pointer;
+  border: none;
+  background: transparent;
 
   &:hover {
     background: colors.$transparentBackgroundHover;

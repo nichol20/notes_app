@@ -22,7 +22,7 @@ export interface NoteData {
   id: number
 	title: string
 	content: string
-	created_at: Date
+	created_at: string
 	important: boolean
 	reminder: string | Date | null
 }
@@ -49,7 +49,7 @@ const NotePage: NextPage<NotePageProps> = ({ data }) => {
   const [ startDate, setStartDate ] = useState<Date | null>(
     data.reminder ? new Date(data.reminder) : null
   )
-  const editOptionEl = useRef<HTMLLIElement>(null)
+  const editOptionRef = useRef<HTMLLIElement>(null)
   const textAreaEl = useRef<HTMLTextAreaElement>(null)
   const RequestController = {
     submitPassword: async () => {
@@ -111,11 +111,18 @@ const NotePage: NextPage<NotePageProps> = ({ data }) => {
   }
 
   const showEditOption = () => {
-    if(editOptionEl.current !== null) editOptionEl.current.style.display = 'block'
+    if(editOptionRef.current) editOptionRef.current.style.display = 'block'
   }
 
   const closeEditOption = () => {
-    if(editOptionEl.current !== null) editOptionEl.current.style.display = 'none'
+    if(editOptionRef.current) editOptionRef.current.style.display = 'none'
+  }
+
+  const backToHomePage = () => {
+    if(previousNoteData.content.length === 0 && previousNoteData.title.length === 0) {
+      RequestController.deleteNote()
+    }
+    router.push('/')
   }
 
   useEffect(() => {
@@ -154,15 +161,13 @@ const NotePage: NextPage<NotePageProps> = ({ data }) => {
       }
 
       <header className={styles.header}>
-        <Link href='/'>
-          <a className={styles.back_button} title='Return to home page'>
-            <Image src={arrowBackIcon} alt='arrow back' />
-          </a>
-        </Link>
+        <button className={styles.back_button} title='Return to home page' onClick={backToHomePage}>
+          <Image src={arrowBackIcon} alt='arrow back' />
+        </button>
 
         <ul className={styles.actions}>
           <li
-           ref={editOptionEl} 
+           ref={editOptionRef} 
            className={styles.edit_option} 
            onClick={RequestController.updateNote}
            title='update note'

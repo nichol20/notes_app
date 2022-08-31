@@ -1,0 +1,97 @@
+@use '../../styles/colors';
+@use '../../styles/mixins' as m;
+
+.task_card {
+  position: relative;
+  width: 400px;
+  height: auto;
+  border-radius: 12px;
+  padding: 20px;
+  background: colors.$secondaryColor;
+  cursor: pointer;
+
+  .title {
+    font-size: 1.5em;
+    color: colors.$textPrimaryColor;
+    margin-bottom: 15px;
+    cursor: default;
+  }
+
+  .tasks_list {
+    @include m.displayFlex(flex-start, flex-start);
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+    cursor: default;
+
+    li {
+      @include m.displayFlex();
+      gap: 5px;
+
+      .checkbox_container {
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+        width: 25px;
+        height: 25px;
+
+        input[type="checkbox"] {
+          display: none;
+        }
+
+        .checkmark {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          background: #eee;
+          border-radius: 4px;
+        }
+
+        &:hover .checkmark {
+          background: #ccc;
+        }
+
+        .checkmark:after {
+          content: "";
+          position: absolute;
+          display: none;
+          left: 9px;
+          top: 5px;
+          width: 5px;
+          height: 10px;
+          border: solid #fff;
+          border-width: 0 3px 3px 0;
+          transform: rotate(45deg);
+          display: none;
+        }
+
+        input[type="checkbox"]:checked ~ .checkmark {
+          background-color: colors.$tertiaryColor;
+        }
+
+        input[type="checkbox"]:checked ~ .checkmark:after {
+          display: block;
+        }
+        
+      }
+      
+      span {
+        font-size: 1em;
+        color: colors.$textSecondaryColor;
+      }
+    }
+  }
+
+  .delete_task_button {
+    @include m.hoverbleOption(30px, 30px);
+    position: absolute;
+    right: 10px;
+    top: 10px;
+
+    img {
+      filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(167deg) brightness(123%) contrast(114%);
+    }
+  }
+}
