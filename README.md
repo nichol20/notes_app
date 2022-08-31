@@ -1,4 +1,4 @@
-# social-media
+# notes_app
 
 ## Run application
 
