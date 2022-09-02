@@ -93,7 +93,7 @@ export const TodoCard = ({ todo, searchQuery, refreshTodosData }: TodoCardProps)
         showModal={showModal}
         setShowModal={setShowModal}
         onSubmit={onTodoModalSubmit}
-        todoData={todo}
+        todoData={{...todo, tasks, title }}
       />
     </>
   )

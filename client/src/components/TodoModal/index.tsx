@@ -108,14 +108,24 @@ export const TodoModal = ({ showModal, setShowModal, onSubmit, todoData }: TodoM
 
   const handleSubmit = async () => {
     await onSubmit(taskTitle, tasks)
-    // if(todoData) setTasks(todoData.tasks)
-    // else setTasks([])
+    if(todoData) {
+      setTaskTitle(todoData.title)
+      setTasks(todoData.tasks)
+    }
+    else {
+      setTaskTitle('')
+      setTasks([{ text: '', checked: false }])
+    }
   }
 
   useEffect(() => {
-    if(showModal) showModalEl()
-    else closeModalEl()
-  }, [ showModal ])
+    if(todoData) {
+      setTaskTitle(todoData.title)
+      setTasks(todoData.tasks)
+    }
+  }, [ todoData ])
+
+  if(!showModal) return <></>
 
   return (
     <div className={styles.container} onClick={handleContainerClick} ref={containerRef}>
@@ -124,6 +134,7 @@ export const TodoModal = ({ showModal, setShowModal, onSubmit, todoData }: TodoM
           type="text" 
           placeholder='Title' 
           className={styles.title} 
+          spellCheck="false"
           value={taskTitle}
           onChange={e => setTaskTitle(e.target.value)}
         />
@@ -139,6 +150,7 @@ export const TodoModal = ({ showModal, setShowModal, onSubmit, todoData }: TodoM
                   <input
                     type="text" 
                     placeholder='New task'
+                    spellCheck="false"
                     value={t.text}
                     onKeyDown={e => handleKeyDown(e, i)}
                     onChange={e => handleTaskChange(e, i)}

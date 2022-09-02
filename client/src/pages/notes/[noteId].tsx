@@ -50,7 +50,7 @@ const NotePage: NextPage<NotePageProps> = ({ data }) => {
     data.reminder ? new Date(data.reminder) : null
   )
   const editOptionRef = useRef<HTMLLIElement>(null)
-  const textAreaEl = useRef<HTMLTextAreaElement>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const RequestController = {
     submitPassword: async () => {
       try {
@@ -104,10 +104,10 @@ const NotePage: NextPage<NotePageProps> = ({ data }) => {
   }
 
   const resizeTextArea = () => {
-    if(textAreaEl.current === null) return
+    if(textAreaRef.current === null) return
 
-    textAreaEl.current.style.height = '40px';
-    textAreaEl.current.style.height = `${textAreaEl.current.scrollHeight + 12}px`
+    textAreaRef.current.style.height = '40px';
+    textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight + 12}px`
   }
 
   const showEditOption = () => {
@@ -228,7 +228,7 @@ const NotePage: NextPage<NotePageProps> = ({ data }) => {
          spellCheck="false"
          defaultValue={noteData.content}
          onChange={e => setNoteData({ ...noteData, content: e.target.value })}
-         ref={textAreaEl}
+         ref={textAreaRef}
         />
       </div>
     </div>
