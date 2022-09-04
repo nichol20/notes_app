@@ -1,6 +1,5 @@
 import Image from 'next/image'
-import React, { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
-
+import React, { useEffect, useRef, useState } from 'react'
 import { TodoData } from '../../pages'
 import { http } from '../../utils/http'
 import { HighlightedText } from '../HighlightedText'
@@ -9,21 +8,17 @@ import { TodoModal } from '../TodoModal'
 import trashIcon from '../../../public/trash.svg'
 
 import styles from './style.module.scss'
-import { SelectionModeBox } from '../SelectionModeBox'
 
 interface TodoCardProps {
   todo: TodoData
   searchQuery: string
   refreshTodosData: () => Promise<void>
-  selectedCardIds: number[]
-  setSelectedCardIds: Dispatch<SetStateAction<number[]>>
 }
 
-export const TodoCard = ({ todo, searchQuery, refreshTodosData, selectedCardIds, setSelectedCardIds }: TodoCardProps) => {
+export const TodoCard = ({ todo, searchQuery, refreshTodosData }: TodoCardProps) => {
   const [ showModal, setShowModal ] = useState(false)
   const [ title, setTitle ] = useState('')
   const [ tasks, setTasks ] = useState<TodoData['tasks']>([])
-  const [ timeoutId, setTimeoutId ] = useState<NodeJS.Timeout>()
   const TodoCardRef = useRef<HTMLDivElement>(null)
 
   const onTodoModalSubmit = async (title: string, tasks: TodoData['tasks']) => {
@@ -37,22 +32,10 @@ export const TodoCard = ({ todo, searchQuery, refreshTodosData, selectedCardIds,
     }
   }
 
-  const handleOnMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const timeout = setTimeout(() => {
-      setSelectedCardIds(prev => {
-        const newData = [...prev]
-        newData.push(todo.id)
-        return newData
-      })
-    }, 1000)
-    setTimeoutId(timeout)
-  }
+  const handleTodoCardClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if(event.target !== TodoCardRef.current) return
 
-  const handleOnMouseUp = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    clearTimeout(timeoutId)
-    if(selectedCardIds.length === 0 && event.target === TodoCardRef.current) {
-      setShowModal(true)
-    }
+    setShowModal(true)
   }
 
   const toggleCheck = async (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -66,18 +49,6 @@ export const TodoCard = ({ todo, searchQuery, refreshTodosData, selectedCardIds,
     } catch (error: any) {
       console.log(error)
     }
-  }
-
-  const toggleSelection = (event: ChangeEvent<HTMLInputElement>) => {
-    setSelectedCardIds(prev => {
-      if(prev.filter(id => id === todo.id).length === 0 && event.target.checked) {
-        const newData = [...prev]
-        newData.push(todo.id)
-        return newData
-      } else {
-        return prev.filter(id => id !== todo.id)
-      }
-    })
   }
 
   const deleteTask = async () => {
@@ -96,15 +67,7 @@ export const TodoCard = ({ todo, searchQuery, refreshTodosData, selectedCardIds,
 
   return (
     <>
-      <div className={styles.task_card} onMouseDown={handleOnMouseDown} onMouseUp={handleOnMouseUp} ref={TodoCardRef} >
-      {
-        selectedCardIds.length > 0 && (
-          <SelectionModeBox
-           checked={selectedCardIds.filter(id => id === todo.id).length > 0}
-           onChange={toggleSelection}
-          />
-        )
-      }
+      <div className={styles.task_card} onClick={handleTodoCardClick} ref={TodoCardRef} >
         <h3 className={styles.title}><HighlightedText text={title} snippet={searchQuery} /></h3>
         <ul className={styles.tasks_list}>
           {
@@ -122,21 +85,16 @@ export const TodoCard = ({ todo, searchQuery, refreshTodosData, selectedCardIds,
           }
         </ul>
 
-        {
-          selectedCardIds.length === 0 && (
-            <button className={styles.delete_task_button} onClick={deleteTask} >
-              <Image src={trashIcon} alt="trash icon" />
-            </button>
-          )
-        }
+        <button className={styles.delete_task_button} onClick={deleteTask} >
+          <Image src={trashIcon} alt="trash icon" />
+        </button>
       </div>
-      {
-        showModal && <TodoModal
-          setShowModal={setShowModal}
-          onSubmit={onTodoModalSubmit}
-          todoData={{...todo, tasks, title }}
-        />
-      }
+      <TodoModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        onSubmit={onTodoModalSubmit}
+        todoData={{...todo, tasks, title }}
+      />
     </>
   )
 }

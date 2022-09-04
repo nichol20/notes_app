@@ -9,15 +9,16 @@ import styles from './style.module.scss'
 type OnSubmit = ((title: string, tasks: TodoData['tasks']) => void) | ((title: string, tasks: TodoData['tasks']) => Promise<void>)
 
 interface TodoModalProps {
+  showModal: boolean
   setShowModal: Dispatch<SetStateAction<boolean>>
   onSubmit: OnSubmit
   todoData?: TodoData
 }
 
 
-export const TodoModal = ({ setShowModal, onSubmit, todoData }: TodoModalProps) => {
-  const [ taskTitle, setTaskTitle ] = useState('')
-  const [ tasks, setTasks ] = useState<TodoData['tasks']>([{ text:'', checked: false }])
+export const TodoModal = ({ showModal, setShowModal, onSubmit, todoData }: TodoModalProps) => {
+  const [ taskTitle, setTaskTitle ] = useState(todoData?.title ?? '')
+  const [ tasks, setTasks ] = useState<TodoData['tasks']>(todoData?.tasks ?? [{ text:'', checked: false }])
   const taskListRef = useRef<HTMLUListElement>(null)
   const TodoModalRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -85,6 +86,20 @@ export const TodoModal = ({ setShowModal, onSubmit, todoData }: TodoModalProps) 
     setTasks(prev => prev.map((t, i) => i === index ? { ...t, text: event.target.value } : t))
   }
 
+  const showModalEl = () => {
+    if(!TodoModalRef.current || !containerRef.current) return
+
+    containerRef.current.style.display = 'block'
+    TodoModalRef.current.style.bottom = '0px'
+  }
+  
+  const closeModalEl = () => {
+    if(!TodoModalRef.current || !containerRef.current) return
+
+    TodoModalRef.current.style.bottom = '-400px'
+    containerRef.current.style.display = 'none'
+  }
+
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if(!containerRef.current) return
 
@@ -109,6 +124,8 @@ export const TodoModal = ({ setShowModal, onSubmit, todoData }: TodoModalProps) 
       setTasks(todoData.tasks)
     }
   }, [ todoData ])
+
+  if(!showModal) return <></>
 
   return (
     <div className={styles.container} onClick={handleContainerClick} ref={containerRef}>

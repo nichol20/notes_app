@@ -11,9 +11,6 @@ import searchIcon from '../../public/search.svg'
 import addIcon from '../../public/add.svg'
 import readerIcon from '../../public/reader.svg'
 import checkboxIcon from '../../public/checkbox.svg'
-import trashIcon from '../../public/trash.svg'
-import closeIcon from '../../public/close.svg'
-import checkmarkIcon from '../../public/checkmark.svg'
 
 import styles from '../styles/Home.module.scss'
 import { useRef, useState } from 'react'
@@ -51,8 +48,7 @@ const Home: NextPage<HomeProps> = ({ notes: notesProp, todos: todosProp }) => {
     )  
   const navBarListRef = useRef<HTMLUListElement>(null)
   const [ tab, setTab ] = useState('notesTab')
-  const [ showTodoModal, setShowTodoModal ] = useState(false)
-  const [ selectedCardIds, setSelectedCardIds ] = useState<number[]>([])
+  const [ showModal, setShowModal ] = useState(false)
 
   const create = async () => {
     switch (tab) {
@@ -68,7 +64,7 @@ const Home: NextPage<HomeProps> = ({ notes: notesProp, todos: todosProp }) => {
         }
         break
       case 'todosTab':
-        setShowTodoModal(true)
+        setShowModal(true)
         break
       default:
         break
@@ -89,7 +85,7 @@ const Home: NextPage<HomeProps> = ({ notes: notesProp, todos: todosProp }) => {
     try {
       await http.post('todos', { title, tasks })
       await refreshTodosData()
-      setShowTodoModal(false)
+      setShowModal(false)
     } catch (error: any) {
       console.log(error)
     }
@@ -104,114 +100,42 @@ const Home: NextPage<HomeProps> = ({ notes: notesProp, todos: todosProp }) => {
       console.log(error)
     }
   }
-
-  const refreshNotesData = async () => {
-    try {
-      const { data: notesData } = await http.get('/notes')
-
-      setNotes(notesData)
-    } catch (error: any) {
-      console.log(error)
-    }
-  }
   
-  const closeSelectionMode = () => {
-    setSelectedCardIds([])
-  }
-
-  const selectAll = () => {
-    setSelectedCardIds(notes.map(note => note.id))
-  }
-
-  const deleteSelected = async () => {
-    try {
-      switch(tab) {
-        case 'notesTab':
-          await Promise.all(selectedCardIds.map(async id => {
-            await http.delete(`/notes/${id}`)
-          }))
-          refreshNotesData()
-          break
-
-        case 'todosTab':
-          await Promise.all(selectedCardIds.map(async id => {
-              await http.delete(`/todos/${id}`)
-          }))
-          refreshTodosData()
-          break
-
-        default:
-          break
-      }
-      
-    } catch (error: any) {
-      console.log(error)
-    }
-  }
-
   return (
     <div className={styles.home_page}>
-      <header className={styles.home_header}>
-        {
-          selectedCardIds.length > 0 ? (
-            <div className={styles.selection_mode_options_header}>
-              <button className={styles.close_selection_mode_button} onClick={closeSelectionMode}>
-                <Image src={closeIcon} alt='close icon' />
-              </button>
-              <span className={styles.selected_items_quantity}>{selectedCardIds.length} selected items</span>
-              <button className={styles.select_all_button} onClick={selectAll}>
-                <Image src={checkmarkIcon} alt='checkmark icon' />
-              </button>
-            </div>
-          ) : (
-            <nav className={styles.nav_bar}>
-              <ul className={styles.nav_list} ref={navBarListRef} >
-                <li className={`${styles.nav_item} ${styles.active}`} onClick={changeTab} id='notesTab'>
-                  <Image src={readerIcon} alt='reader icon' />
-                </li>
-                <li className={styles.nav_item} onClick={changeTab} id='todosTab'>
-                  <Image src={checkboxIcon} alt='checkbox icon'/>
-                </li>
-              </ul>
-            </nav>
-          )
-        }
-      </header>
-
       <div className={styles.search_box}>
         <div className={styles.image_box} >
           <Image src={searchIcon} alt='search' />
         </div>
         <input
          type="text" 
-         placeholder='Search' 
+         placeholder='Look for notes' 
          onChange={e => setSearchQuery(lowerCase(e.target.value))}
         />
       </div>
+
+      <nav className={styles.nav_bar}>
+        <ul className={styles.nav_list} ref={navBarListRef} >
+          <li className={`${styles.nav_item} ${styles.active}`} onClick={changeTab} id='notesTab'>
+            <Image src={readerIcon} alt='reader icon' />
+          </li>
+          <li className={styles.nav_item} onClick={changeTab} id='todosTab'>
+            <Image src={checkboxIcon} alt='checkbox icon'/>
+          </li>
+        </ul>
+      </nav>
 
       {
         tab === 'notesTab' ? (
           <div className={styles.notes_container}>
             {
               filteredNotes.map((note, index) => {
-                if(note.important) return <NodeCard
-                 note={note} 
-                 key={index} 
-                 searchQuery={searchQuery} 
-                 selectedCardIds={selectedCardIds}
-                 setSelectedCardIds={setSelectedCardIds} 
-                />
+                if(note.important) return <NodeCard note={note} key={index} searchQuery={searchQuery} />
               })
             }
             {
               filteredNotes.map((note, index) => {
-                if(!note.important) return <NodeCard
-                 note={note} 
-                 key={index} 
-                 searchQuery={searchQuery} 
-                 selectedCardIds={selectedCardIds}
-                 setSelectedCardIds={setSelectedCardIds}
-                />
+                if(!note.important) return <NodeCard note={note} key={index} searchQuery={searchQuery} />
               })
             }
             
@@ -221,51 +145,24 @@ const Home: NextPage<HomeProps> = ({ notes: notesProp, todos: todosProp }) => {
           <div className={styles.tasks_container}>
             {
               filteredTodos.map((todo, index) => {
-                return <TodoCard
-                 todo={todo} 
-                 key={index} 
-                 searchQuery={searchQuery} 
-                 refreshTodosData={refreshTodosData}
-                 selectedCardIds={selectedCardIds}
-                 setSelectedCardIds={setSelectedCardIds}
-                />
+                return <TodoCard todo={todo} key={index} searchQuery={searchQuery} refreshTodosData={refreshTodosData}/>
               })
             }
-
-            {
-              showTodoModal && <TodoModal
-               setShowModal={setShowTodoModal}
-               onSubmit={onTodoModalSubmit}
-              /> 
-            }
+            <TodoModal
+             showModal={showModal}
+             setShowModal={setShowModal}
+             onSubmit={onTodoModalSubmit}
+            />
           </div>
         ) 
         : (<></>)
       }
 
-      {
-        selectedCardIds.length === 0 && (
-          <button className={styles.add_button} onClick={create}>
-            <div className={styles.image_box}>
-              <Image src={addIcon} alt='add' />
-            </div>
-          </button>
-        )
-      }
-
-      {
-        selectedCardIds.length > 0 && (
-          <div className={styles.selection_mode_options_footer}>
-            <ul>
-              <li>
-                <button className={styles.delete_all_button} onClick={deleteSelected}>
-                  <Image src={trashIcon} alt='trash icon' />
-                </button>
-              </li>
-            </ul>
-          </div>
-        )
-      }
+      <button className={styles.add_button} onClick={create}>
+        <div className={styles.image_box}>
+          <Image src={addIcon} alt='add' />
+        </div>
+      </button>
     </div>
   )
 }
