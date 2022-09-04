@@ -37,6 +37,8 @@
   transition: .3s;
   justify-self: center;
   position: relative;
+  overflow: hidden;
+  user-select: none;
 
   &:hover {
     width: 340px;
